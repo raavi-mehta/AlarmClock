@@ -19,22 +19,29 @@ function createAlarm()
     alarmDate.setMinutes(mins);
     alarmDate.setSeconds(0);
     var alarmTimer = null;
-    var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer};
-    alarmList.push(newAlarm);
 
+    var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:i};
+    alarmList.push(newAlarm);
     setAlarm(newAlarm);
     updatePreview(newAlarm);
 }
 
 function setAlarm(alarm){
     clearTimeout( alarm.alarmTimer );
-    var time = (alarm.date - (new Date()) );
-    alarm.alarmTimer = setTimeout( function(){fireAlarm();} ,parseInt(time) );
+    var currentDate = new Date();
+    if(alarm.date < currentDate)
+    {
+        alarm.date.setDate(alarm.date.getDate()+1);
+    }
+    var time = (alarm.date - currentDate );
+    //alert(alarm.date);
+    alarm.alarmTimer = setTimeout( function(){fireAlarm(alarm.aId);} ,parseInt(time) );
 }
 
-function fireAlarm()
+function fireAlarm(x)
 {
     alert("The alarm is going off!!!");
+    deleteAlarm(document.getElementById(x));
 }
 
 function checkValidAlarm(x)
@@ -45,18 +52,28 @@ function checkValidAlarm(x)
     }
 }
 
+
+//ore add the edit button in here beside the delete button (it can be the same as the delete button just call a different function)
 function updatePreview(alarm)
 {
-    $('#addr'+i).html("<td>"+ (i+1) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>");
+    $('#addr'+i).html("<td>"+ (i) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>"+"<td width='70%'>"+ "<input type=\"button\" value='delete' id="+ i +" onclick=\"deleteAlarm(this)\" />"+"</td>");
     $('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
     i++;
 }
 
-$(document).ready(function(){
-    $('#myTable').on('click', 'input[type="button"]', function () {
-        $(this).closest('tr').remove();
-    })
-    $('p input[type="button"]').click(function () {
-        $('#myTable').append('<tr><td><input type="text" class="fname" /></td><td><input type="button" value="Delete" /></td></tr>')
-    });
-});
+function deleteAlarm(x)
+{
+    for(var count=0; count< alarmList.length; count++)
+    {
+        if(alarmList[count].aId == x.id)
+        {
+            break;
+        }
+    }
+    //alert("deleting: " + alarmList[count].label);
+    clearTimeout(alarmList[count].alarmTimer);
+    alarmList.splice(count,1);
+    $(x).closest("tr").remove();
+    refrsehView();
+}
+
