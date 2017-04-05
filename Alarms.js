@@ -40,8 +40,19 @@ function setAlarm(alarm){
 
 function fireAlarm(x)
 {
-    alert("The alarm is going off!!!");
+    //alert("The alarm is going off!!!");
+    jQuery.noConflict();
+    $('#alarmModal').modal('show');
     deleteAlarm(document.getElementById(x));
+}
+
+function setSnooze()
+{
+    var alarmDate = new Date();
+    alarmDate.setSeconds(30);
+    var alarmTimer = null;
+    var snoozeAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:-1};
+    setAlarm(snoozeAlarm);
 }
 
 function checkValidAlarm(x)
@@ -53,7 +64,6 @@ function checkValidAlarm(x)
 }
 
 
-//ore add the edit button in here beside the delete button (it can be the same as the delete button just call a different function)
 function updatePreview(alarm)
 {
     $('#addr'+i).html("<td>"+ (i) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>"+"<td width='70%'>"+ "<input type=\"button\" value='delete' id="+ i +" onclick=\"deleteAlarm(this)\" />"+"</td>");
@@ -76,4 +86,3 @@ function deleteAlarm(x)
     $(x).closest("tr").remove();
     refrsehView();
 }
-
