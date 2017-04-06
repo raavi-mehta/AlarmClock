@@ -3,7 +3,8 @@
  */
 
 var alarmList = [];
-var i=0;
+var i = 0;
+var ringtone = new Audio("ringtone.mp3");
 
 function createAlarm()
 {
@@ -47,6 +48,8 @@ function fireAlarm(x)
     $('#alarmModal').modal('show');
     //deleteAlarm(document.getElementById(x));
     setInactiveOnRing(x);
+	// start ringtone
+	startRingtone();
 }
 
 function setSnooze()
@@ -56,6 +59,7 @@ function setSnooze()
     var alarmTimer = null;
     var snoozeAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:-1};
     setAlarm(snoozeAlarm);
+	stopRingtone();
 }
 
 function checkValidAlarm(x)
@@ -77,6 +81,7 @@ function updatePreview(alarm)
 
 function deleteAlarm(x)
 {
+	stopRingtone();
     for(var count=0; count< alarmList.length; count++)
     {
         if(alarmList[count].aId == x.id)
@@ -128,4 +133,15 @@ function setInactiveOnRing(xAlarmID)
     }
     alarmList[count].activeFlag = false;
     document.getElementById(checkboxID).click();
+}
+
+function startRingtone()
+{
+	ringtone.play();
+}
+
+function stopRingtone()
+{
+	ringtone.pause();
+	ringtone.currentTime = 0;
 }
