@@ -10,7 +10,7 @@ function clock() {
     var t = d.toLocaleTimeString();
     document.getElementById('time').innerHTML = t;
     var timeout = setTimeout(clock, 500);
-   // loadPastSession();
+    //loadPastSession();
 }
 
 function loadPastSession(){

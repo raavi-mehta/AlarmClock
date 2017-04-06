@@ -7,7 +7,6 @@ var i=0;
 
 function createAlarm()
 {
-
     var alarmLabel = document.getElementById("alarmLabel").value;
     var alarmSetTime = document.getElementById("alarmTime").value;
     checkValidAlarm(alarmSetTime);
@@ -20,7 +19,7 @@ function createAlarm()
     alarmDate.setSeconds(0);
     var alarmTimer = null;
 
-    var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:i};
+    var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:i, activeFlag:true};
     alarmList.push(newAlarm);
     setAlarm(newAlarm);
     updatePreview(newAlarm);
@@ -32,7 +31,7 @@ function createAlarm()
 function setAlarm(alarm){
     clearTimeout( alarm.alarmTimer );
     var currentDate = new Date();
-    if(alarm.date < currentDate)
+    while(alarm.date < currentDate)
     {
         alarm.date.setDate(alarm.date.getDate()+1);
     }
@@ -46,7 +45,8 @@ function fireAlarm(x)
     //alert("The alarm is going off!!!");
     jQuery.noConflict();
     $('#alarmModal').modal('show');
-    deleteAlarm(document.getElementById(x));
+    //deleteAlarm(document.getElementById(x));
+    setInactiveOnRing(x);
 }
 
 function setSnooze()
@@ -69,7 +69,8 @@ function checkValidAlarm(x)
 
 function updatePreview(alarm)
 {
-    $('#addr'+i).html("<td>"+ (i) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>"+"<td width='70%'>"+ "<input type=\"button\" value='delete' id="+ i +" onclick=\"deleteAlarm(this)\" /> "+ "<input type=\"button\" value='cancel' id="+ i +" onclick=\"cancelAlarm(this)\" />"+"</td>");
+
+    $('#addr'+i).html("<td>"+ (i) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>"+ "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check"+ i +"\"></td>"  + "<td width='70%'>"+ "<input type=\"button\" value='delete' id="+ i +" onclick=\"deleteAlarm(this)\" />"+"</td>");
     $('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
     i++;
 }
@@ -90,15 +91,41 @@ function deleteAlarm(x)
     refrsehView();
 }
 
-function cancelAlarm(x)
+
+function toggleCheckbox(x)
 {
+
+    idsearch = x.id.substring(x.id.indexOf('k')+1, x.id.length);
     for(var count=0; count< alarmList.length; count++)
     {
-        if(alarmList[count].aId == x.id)
+        if(alarmList[count].aId == idsearch)
         {
             break;
         }
     }
-    clearTimeout(alarmList[count].alarmTimer);
 
+    if(alarmList[count].activeFlag == true)
+    {
+        clearTimeout(alarmList[count].alarmTimer);
+        alarmList[count].activeFlag=false;
+    }
+    else
+    {
+        setAlarm(alarmList[count]);
+        alarmList[count].activeFlag=true;
+    }
+}
+
+function setInactiveOnRing(xAlarmID)
+{
+    checkboxID = "check" + xAlarmID;
+    for(var count=0; count< alarmList.length; count++)
+    {
+        if(alarmList[count].aId == xAlarmID)
+        {
+            break;
+        }
+    }
+    alarmList[count].activeFlag = false;
+    document.getElementById(checkboxID).click();
 }
