@@ -24,6 +24,9 @@ function createAlarm()
     alarmList.push(newAlarm);
     setAlarm(newAlarm);
     updatePreview(newAlarm);
+    localStorage.setItem("AlarmList",JSON.stringify(alarmList));
+    var storedList = localStorage.getItem("AlarmList");
+    window.alert(storedList.toString());
 }
 
 function setAlarm(alarm){
@@ -66,7 +69,7 @@ function checkValidAlarm(x)
 
 function updatePreview(alarm)
 {
-    $('#addr'+i).html("<td>"+ (i) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>"+"<td width='70%'>"+ "<input type=\"button\" value='delete' id="+ i +" onclick=\"deleteAlarm(this)\" />"+"</td>");
+    $('#addr'+i).html("<td>"+ (i) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>"+"<td width='70%'>"+ "<input type=\"button\" value='delete' id="+ i +" onclick=\"deleteAlarm(this)\" /> "+ "<input type=\"button\" value='cancel' id="+ i +" onclick=\"cancelAlarm(this)\" />"+"</td>");
     $('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
     i++;
 }
@@ -85,4 +88,17 @@ function deleteAlarm(x)
     alarmList.splice(count,1);
     $(x).closest("tr").remove();
     refrsehView();
+}
+
+function cancelAlarm(x)
+{
+    for(var count=0; count< alarmList.length; count++)
+    {
+        if(alarmList[count].aId == x.id)
+        {
+            break;
+        }
+    }
+    clearTimeout(alarmList[count].alarmTimer);
+
 }
