@@ -34,7 +34,7 @@ function loadPastSession() {
             // converting  the date from jason format
             list[i].date = new Date(list[i].jsonDate);
             console.log("Converted tiime: " + list[i].date);
-
+            list[i].aId = i;
             var currentDate = new Date();
             console.log("current time: " + currentDate);
             if (list[i].jsonDate < currentDate.getTime()) {
