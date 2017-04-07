@@ -62,6 +62,7 @@ function setAlarm(alarm){
     {
         console.log("Alarm date is less than current date");
         alarm.date.setDate(alarm.date.getDate()+1);
+        alarm.jsonDate = alarm.date.getTime();
     }
     var time = (alarm.date - currentDate );
     console.log("The time remaining: " + time);
@@ -121,11 +122,11 @@ function updatePreview(alarm)
     console.log("update preview getting called: " + alarm.date);
     if(alarm != null) {
         if (alarm.activeFlag) {
-            $('#addr' + i).html("<td>" + (i) + "</td><td>" + alarm.date + "</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
+            $('#addr' + i).html("<td>" + (i)  +"</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
             i++;
         } else {
-            $('#addr' + i).html("<td>" + (i) + "</td><td>" + alarm.date + "</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" unchecked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
+            $('#addr' + i).html("<td>" + (i) +  "</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" unchecked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
             i++;
         }
@@ -154,7 +155,7 @@ function deleteAlarm(x)
     alarmList.splice(count,1);
     $(x).closest("tr").remove();
     localStorage.setItem("AlarmList",JSON.stringify(alarmList));
-    refrsehView();
+
 }
 
 
@@ -205,6 +206,9 @@ function toggleCheckbox(x)
  */
 function setInactiveOnRing(xAlarmID)
 {
+    if (xAlarmID == -1){
+        return;
+    }
     checkboxID = "check" + xAlarmID;
     for(var count=0; count< alarmList.length; count++)
     {
@@ -213,7 +217,7 @@ function setInactiveOnRing(xAlarmID)
             break;
         }
     }
-    alarmList[count].activeFlag = false;
+   // alarmList[count].activeFlag = false;
     console.log ("The flag was changed after ring to" + alarmList[count].activeFlag.toString() );
     document.getElementById(checkboxID).click();
 }
