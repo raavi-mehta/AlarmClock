@@ -19,30 +19,41 @@ function createAlarm()
     alarmDate.setMinutes(mins);
     alarmDate.setSeconds(0);
     var alarmTimer = null;
-
-    var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:i, activeFlag:true};
+    console.log("original time: " + alarmDate);
+    var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:i, activeFlag:true, jsonDate: alarmDate.getTime()};
+    console.log("original time after: " + newAlarm.date);
     alarmList.push(newAlarm);
+    console.log("Alerm List size: " + alarmList.length);
     setAlarm(newAlarm);
     updatePreview(newAlarm);
     localStorage.setItem("AlarmList",JSON.stringify(alarmList));
-    var storedList = localStorage.getItem("AlarmList");
-    window.alert(storedList.toString());
+    console.log("create alarm getting called");
+    // localStorage.setItem("AlarmList",JSON.stringify(alarmList));
+    // var storedList = localStorage.getItem("AlarmList");
+    // window.alert(storedList.toString());
 }
 
 function setAlarm(alarm){
-    clearTimeout( alarm.alarmTimer );
+
+    console.log("set alarm getting called");
+    if (alarm.alarmTimer != null) {
+        clearTimeout(alarm.alarmTimer);
+    }
     var currentDate = new Date();
     while(alarm.date < currentDate)
     {
+        console.log("Alarm date is less than current date");
         alarm.date.setDate(alarm.date.getDate()+1);
     }
     var time = (alarm.date - currentDate );
+    console.log("The time remaining: " + time);
     //alert(alarm.date);
     alarm.alarmTimer = setTimeout( function(){fireAlarm(alarm.aId);} ,parseInt(time) );
 }
 
 function fireAlarm(x)
 {
+    console.log("fire alarm getting called")
     //alert("The alarm is going off!!!");
     jQuery.noConflict();
     $('#alarmModal').modal('show');
@@ -73,14 +84,23 @@ function checkValidAlarm(x)
 
 function updatePreview(alarm)
 {
-
-    $('#addr'+i).html("<td>"+ (i) +"</td><td>"+alarm.time+"</td>"+"</td><td>"+alarm.label+"</td>"+ "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check"+ i +"\"></td>"  + "<td width='70%'>"+ "<input type=\"button\" value='delete' id="+ i +" onclick=\"deleteAlarm(this)\" />"+"</td>");
-    $('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
-    i++;
+    console.log("update preview getting called: " + alarm.date);
+    if(alarm != null) {
+        if (alarm.activeFlag) {
+            $('#addr' + i).html("<td>" + (i) + "</td><td>" + alarm.date + "</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
+            $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+            i++;
+        } else {
+            $('#addr' + i).html("<td>" + (i) + "</td><td>" + alarm.date + "</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" unchecked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
+            $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+            i++;
+        }
+    }
 }
 
 function deleteAlarm(x)
 {
+    console.log("delete alarm getting called");
 	stopRingtone();
     for(var count=0; count< alarmList.length; count++)
     {
@@ -99,25 +119,35 @@ function deleteAlarm(x)
 
 function toggleCheckbox(x)
 {
-
+    console.log("toggle checkbox getting called");
     idsearch = x.id.substring(x.id.indexOf('k')+1, x.id.length);
+    console.log("Id search value: " + idsearch);
     for(var count=0; count< alarmList.length; count++)
     {
+        var currentDate = new Date();
+
+
         if(alarmList[count].aId == idsearch)
         {
+            console.log("Alarm id: " + alarmList[count].aId + "id search value: " + idsearch);
             break;
+
         }
     }
 
     if(alarmList[count].activeFlag == true)
     {
+        console.log("flag is true");
         clearTimeout(alarmList[count].alarmTimer);
         alarmList[count].activeFlag=false;
+        localStorage.setItem("AlarmList",JSON.stringify(alarmList));
     }
     else
     {
+        console.log("flag is false");
         setAlarm(alarmList[count]);
         alarmList[count].activeFlag=true;
+        localStorage.setItem("AlarmList",JSON.stringify(alarmList));
     }
 }
 
