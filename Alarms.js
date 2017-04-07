@@ -1,11 +1,18 @@
 /**
  * Created by Quinn on 2017-03-29.
+ * This class contains all the functions to create, cancel, edit, snooze, and delete alarms
+ *
  */
+
+
 
 var alarmList = [];
 var i = 0;
 var ringtone = new Audio("ringtone.mp3");
 
+/**
+ * gets the values of time and label given by the user and initializes alarm object
+ */
 function createAlarm()
 {
     var alarmLabel = document.getElementById("alarmLabel").value;
@@ -21,18 +28,29 @@ function createAlarm()
     var alarmTimer = null;
     console.log("original time: " + alarmDate);
     var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:i, activeFlag:true, jsonDate: alarmDate.getTime()};
+    // for testing
     console.log("original time after: " + newAlarm.date);
     alarmList.push(newAlarm);
+    console.log("the id on create is : " + alarmList[0].aId)
     console.log("Alerm List size: " + alarmList.length);
     setAlarm(newAlarm);
     updatePreview(newAlarm);
+
+    //storing the alarmList for future session
     localStorage.setItem("AlarmList",JSON.stringify(alarmList));
     console.log("create alarm getting called");
-    // localStorage.setItem("AlarmList",JSON.stringify(alarmList));
-    // var storedList = localStorage.getItem("AlarmList");
-    // window.alert(storedList.toString());
+
 }
 
+
+
+
+
+/**
+ * sets the timeout for the alarm after checking that it is in the furture than current time
+ * if time set in the past , it sets it for the next day
+ * @param alarm object
+ */
 function setAlarm(alarm){
 
     console.log("set alarm getting called");
@@ -47,14 +65,17 @@ function setAlarm(alarm){
     }
     var time = (alarm.date - currentDate );
     console.log("The time remaining: " + time);
-    //alert(alarm.date);
     alarm.alarmTimer = setTimeout( function(){fireAlarm(alarm.aId);} ,parseInt(time) );
 }
 
+
+/**
+ *starts the ringtone and shows the modal that alarm is ringing
+ * @param  alarm Id
+ */
 function fireAlarm(x)
 {
     console.log("fire alarm getting called")
-    //alert("The alarm is going off!!!");
     jQuery.noConflict();
     $('#alarmModal').modal('show');
     //deleteAlarm(document.getElementById(x));
@@ -63,6 +84,10 @@ function fireAlarm(x)
 	startRingtone();
 }
 
+
+/**
+ * sets 30 seconds timeout for snooze
+ */
 function setSnooze()
 {
     var alarmDate = new Date();
@@ -73,6 +98,11 @@ function setSnooze()
 	stopRingtone();
 }
 
+
+/**
+ *checks that if alarm parameters were correctly inputted by the user
+ * @param  alarm object
+ */
 function checkValidAlarm(x)
 {
     if(x == null || x == "")
@@ -82,6 +112,10 @@ function checkValidAlarm(x)
 }
 
 
+/**
+ *sets the alarm properties in a  row for the table
+ * @param alarm
+ */
 function updatePreview(alarm)
 {
     console.log("update preview getting called: " + alarm.date);
@@ -98,6 +132,13 @@ function updatePreview(alarm)
     }
 }
 
+
+
+
+/**
+ * clears timeout for the given alarm and removes from list and table
+ * @param x
+ */
 function deleteAlarm(x)
 {
     console.log("delete alarm getting called");
@@ -109,14 +150,20 @@ function deleteAlarm(x)
             break;
         }
     }
-    //alert("deleting: " + alarmList[count].label);
     clearTimeout(alarmList[count].alarmTimer);
     alarmList.splice(count,1);
     $(x).closest("tr").remove();
+    localStorage.setItem("AlarmList",JSON.stringify(alarmList));
     refrsehView();
 }
 
 
+
+/**
+ * sets the logic for changing the checkbox
+ * sets to active if alarm was inactive before and vice versa
+ * @param  alarm object
+ */
 function toggleCheckbox(x)
 {
     console.log("toggle checkbox getting called");
@@ -145,12 +192,17 @@ function toggleCheckbox(x)
     else
     {
         console.log("flag is false");
-        setAlarm(alarmList[count]);
         alarmList[count].activeFlag=true;
+        setAlarm(alarmList[count]);
         localStorage.setItem("AlarmList",JSON.stringify(alarmList));
     }
 }
 
+
+/**
+ * sets the activeflag for alarm as false and unclicks the checkbox for active in the table
+ * @param  alarm Id
+ */
 function setInactiveOnRing(xAlarmID)
 {
     checkboxID = "check" + xAlarmID;
@@ -162,14 +214,25 @@ function setInactiveOnRing(xAlarmID)
         }
     }
     alarmList[count].activeFlag = false;
+    console.log ("The flag was changed after ring to" + alarmList[count].activeFlag.toString() );
     document.getElementById(checkboxID).click();
 }
 
+
+
+
+/*
+ * starts the ringtone
+ */
 function startRingtone()
 {
 	ringtone.play();
 }
 
+
+/**
+ *stops the  ringtone
+ */
 function stopRingtone()
 {
 	ringtone.pause();

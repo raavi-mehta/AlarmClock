@@ -1,10 +1,18 @@
 /**
  * Created by Quinn on 2017-03-28.
  */
+
+
+
+
 var alarmSetTime;
 var i=0;
 var savedList =[]
 
+
+/**
+ * displays the time
+ */
 function clock() {
     var d = new Date();
     var t = d.toLocaleTimeString();
@@ -13,12 +21,17 @@ function clock() {
     //loadPastSession();
 }
 
+
+/**
+ * gets the value from local storage and displays in the table
+ */
 function loadPastSession() {
     if (localStorage.length > 0) {
         var rawList = localStorage.getItem("AlarmList");
         var list = JSON.parse(rawList);
 
         for(var i = 0; i < list.length; i++) {
+            // converting  the date from jason format
             list[i].date = new Date(list[i].jsonDate);
             console.log("Converted tiime: " + list[i].date);
 
@@ -35,13 +48,10 @@ function loadPastSession() {
                 }
 
             }
-            // list[i].date = new Date(list[i].jsonDate);
-            // console.log("Converted tiime: " + list[i].date);
+
+            console.log("after refresh alarm active value " + list[i].activeFlag )
             alarmList.push(list[i]);
             updatePreview(list[i]);
-            // if (list[i].jsonDate < currentDate.getTime()) {
-            //     document.getElementById("check" + list[i].aId).click();
-            // }
 
         }
     } else {
@@ -49,19 +59,3 @@ function loadPastSession() {
     }
 }
 
-// function create( alarm ){
-//     var hrs = alarmSetTime.substring(0, alarmSetTime.indexOf(':'));
-//     var mins = alarmSetTime.substring(alarmSetTime.indexOf(':')+1, alarmSetTime.length);
-//
-//     var alarmDate = new Date();
-//     alarmDate.setHours(hrs);
-//     alarmDate.setMinutes(mins);
-//     alarmDate.setSeconds(0);
-//     var alarmTimer = null;
-//
-//     var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:i, activeFlag:true};
-//     alarmList.push(newAlarm);
-//     setAlarm(newAlarm);
-//     updatePreview(newAlarm);
-//
-// }
