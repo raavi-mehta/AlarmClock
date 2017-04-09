@@ -5,7 +5,6 @@
  */
 
 
-
 var alarmList = [];
 var i = 0;
 var ringtone = new Audio("ringtone.mp3");
@@ -122,11 +121,14 @@ function updatePreview(alarm)
     console.log("update preview getting called: " + alarm.date);
     if(alarm != null) {
         if (alarm.activeFlag) {
-            $('#addr' + i).html("<td>" + (i)  +"</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
+          $('#addr' + i).html("<td>" + (i)  +"</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" +  "<td width='70%'>" +"<input type=\"button\" value='edit' id=" + i + " onclick=\"editAlarm(this)\" />" + "</td>");   
+//<div><a href="#myModal" data-toggle="modal" id="1" data-target="#edit-modal">Edit 1</a></div>
+//<a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
+
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
             i++;
         } else {
-            $('#addr' + i).html("<td>" + (i) +  "</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" unchecked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" + "</td>");
+          $('#addr' + i).html("<td>" + (i)  +"</td><td>" + alarm.time + "</td>" + "</td><td>" + alarm.label + "</td>" + "<td align='center'><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" checked id=\"check" + i + "\"></td>" + "<td width='70%'>" + "<input type=\"button\" value='delete' id=" + i + " onclick=\"deleteAlarm(this)\" />" +  "<td width='70%'>" +"<input type=\"button\" value='edit' id=" + i + " onclick=\"editAlarm(this)\" />" + "</td>");   
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
             i++;
         }
@@ -157,6 +159,21 @@ function deleteAlarm(x)
     localStorage.setItem("AlarmList",JSON.stringify(alarmList));
 
 }
+
+
+function editAlarm(x)
+{
+     jQuery.noConflict();
+
+     $("#Id").val($(this).data('id'));
+     $('#editModal').modal('show');
+
+
+}
+
+
+
+
 
 
 
@@ -241,4 +258,57 @@ function stopRingtone()
 {
 	ringtone.pause();
 	ringtone.currentTime = 0;
+}
+
+
+function edit(x)
+{
+
+        var alarm_id = document.getElementById("idLabel").value;
+    //stopRingtone();
+
+
+
+
+
+
+   var alarmLabel = document.getElementById("editLabel").value;
+    var alarmSetTime = document.getElementById("editTime").value;
+    checkValidAlarm(alarmSetTime);
+    var hrs = alarmSetTime.substring(0, alarmSetTime.indexOf(':'));
+    var mins = alarmSetTime.substring(alarmSetTime.indexOf(':')+1, alarmSetTime.length);
+
+    var alarmDate = new Date();
+    alarmDate.setHours(hrs);
+    alarmDate.setMinutes(mins);
+    alarmDate.setSeconds(0);
+    var alarmTimer = null;
+    console.log("original time: " + alarmDate);
+    var newAlarm = {time: alarmSetTime, label: alarmLabel, date: alarmDate, timer:alarmTimer, aId:alarm_id, activeFlag:true, jsonDate: alarmDate.getTime()};
+     setAlarm(newAlarm);
+
+
+    //storing the alarmList for future session
+    localStorage.setItem("AlarmList",JSON.stringify(alarmList));
+
+
+
+
+
+
+    for(var count=0; count< alarmList.length; count++)
+    {
+        if(alarmList[count].aId == parseInt(alarm_id))
+        {
+            break;
+        }
+    }
+    clearTimeout(alarmList[count].alarmTimer);
+    alarmList[count].time=alarmLabel;
+    alarmList[count].label=alarmSetTime;
+
+
+    $(x).closest("tr").remove();
+    localStorage.setItem("AlarmList",JSON.stringify(alarmList));
+
 }

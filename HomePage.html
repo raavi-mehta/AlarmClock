@@ -50,6 +50,7 @@
                     <h4 class="modal-title">Create a New Alarm</h4>
                 </div>
                 <div class="modal-body">
+
                     <form>
                         Add a Label:
                         <br>
@@ -93,6 +94,66 @@
     </div>
 </div>
 
+
+
+
+
+
+<!-- ============= Alarm edit Modal -->
+
+
+
+<div class="container">
+    <!-- Modal -->
+    <div class="modal fade" id="editModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                 <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Alarm</h4>
+                </div>
+                <div class="modal-body">
+
+                    <form>
+                        Change Label:
+                        <br>
+                        <input type="text" name="label" id="editLabel">
+                        <br>
+                        Select a time:
+                        <br>
+                        <input type="time" name="timesetter" id="editTime">
+
+
+                        <br>
+						  Alarm Id:
+                        <br>
+                        <input type="text" name="label" id="idLabel">
+
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" name="submit" onclick="edit()" class="btn btn-default" data-dismiss="modal">Edit</button>
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
 <!-- ===================================================
     List to display alarms -->
 
@@ -117,6 +178,9 @@
                     <th class="text-center">
                         Delete
                     </th>
+                    <th class="text-center">
+                        Edit
+                    </th>
 
                 </tr>
                 </thead>
@@ -133,6 +197,9 @@
                     </td>
                     <td>
                     </td>
+                    <td>
+                    </td>
+
                 </tr>
                 <tr id='addr1'></tr>
                 </tbody>
